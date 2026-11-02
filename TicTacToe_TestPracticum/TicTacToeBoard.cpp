@@ -38,8 +38,10 @@ void TicTacToeBoard::resetBoard() {
 }
 
 // If specified space is empty - return true
-//    no arg checking on this one :)
+// argumenst: row & column (0-2) - if outside range, invalid_argument exception thrown
 bool TicTacToeBoard::isSquareEmpty(int row, int col) const {
+
+	validateRowsAndColumns(row, col);
 	if (board[row][col] == EMPTY)
 		return true;
 	else
@@ -130,7 +132,7 @@ bool TicTacToeBoard::isWinner(Player playerToCheck) const {
 // Return true if game is a Draw - all squares filled and no one has won
 //   intentional defect added
 bool TicTacToeBoard::isDraw() const {
-	if ((takenSquareCount > BOARD_NUM_ROWS * BOARD_NUM_COLS) && 
+	if ((takenSquareCount >= BOARD_NUM_ROWS * BOARD_NUM_COLS) && 
 		!this->isWinner(X) && !this->isWinner(O)) {
 		return true;
 	}
