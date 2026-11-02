@@ -79,7 +79,7 @@ namespace TicTacToeTest
 		//   Note: can use getPlayer() or getPlayerName() to verify the current player
 		//     (getPlayer() returns an enum, getPlayerName() returns a character)
 
-		/* Test method that caused the error C2664
+		/* Test method that caused the error C2338
 		TEST_METHOD(VerifyResetBoardDoesNotChangeCurrentPlayer) {
 			Assert::AreEqual(board.getPlayer(), TicTacToeBoard::X, L"Expected current player to be X at start of test");
 			board.nextPlayer();
