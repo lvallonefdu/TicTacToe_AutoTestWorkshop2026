@@ -64,7 +64,13 @@ namespace TicTacToeTest
 
 		// verify overwriting a square returns false and does not change the square contents
 		/* TEST_METHOD .... */
-
+		TEST_METHOD(VerifySquareContents) {
+			board.writeSquare(1, 1, TicTacToeBoard::X);
+			Assert::AreEqual(board.getSquareContents(1, 1), 'X', L"Expected square (1,1) to contain an X");
+			bool writeResult = board.writeSquare(1, 1, TicTacToeBoard::O);
+			Assert::IsFalse(writeResult, L"Expected writeSquare to return false when trying to overwrite an occupied square");
+			Assert::AreEqual(board.getSquareContents(1, 1), 'X', L"Expected square (1,1) to still contain an X after failed overwrite attempt");
+		}
 
 		// verify that the current player does not change after resetBoard()
 		//   Approach - verify precondition (current player is X),
@@ -72,16 +78,48 @@ namespace TicTacToeTest
 		//   Note: can use getPlayer() or getPlayerName() to verify the current player
 		//     (getPlayer() returns an enum, getPlayerName() returns a character)
 
-
+		TEST_METHOD(VerifyCurrentPlayerAfterResetBoard) {
+			Assert::AreEqual(board.getPlayerName(), 'X', L"Expected current player to be X at start of test");
+			board.nextPlayer();
+			Assert::AreEqual(board.getPlayerName(), 'O', L"Expected current player to be O after nextPlayer() call");
+			board.resetBoard();
+			Assert::AreEqual(board.getPlayerName(), 'O', L"Expected current player to still be O after resetBoard() call");
+		}
 
 		// verify a winning condition is detected for X in the first row
-
+		TEST_METHOD(VerifyWinningConditionForXInFirstRow) {
+			board.writeSquare(0, 0, TicTacToeBoard::X);
+			board.writeSquare(0, 1, TicTacToeBoard::X);
+			board.writeSquare(0, 2, TicTacToeBoard::X);
+			Assert::IsTrue(board.isWinner(TicTacToeBoard::X), L"Expected X to be detected as winner in first row");
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::O), L"Expected O to NOT be detected as winner when X has won");
+		}
 
 		// verify a winning condition is detected for O on a diagonal
-
+		TEST_METHOD(VerifyWinningConditionForOOnDiagonal) {
+			board.writeSquare(0, 0, TicTacToeBoard::O);
+			board.writeSquare(1, 1, TicTacToeBoard::O);
+			board.writeSquare(2, 2, TicTacToeBoard::O);
+			Assert::IsTrue(board.isWinner(TicTacToeBoard::O), L"Expected O to be detected as winner on diagonal");
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::X), L"Expected X to NOT be detected as winner when O has won");
+		}
 
 		// verify a draw condition is detected when all squares are filled and no one has won
-
+		TEST_METHOD(VerifyDrawCondition) {
+			// Fill the board in a way that results in a draw
+			board.writeSquare(0, 0, TicTacToeBoard::X);
+			board.writeSquare(0, 1, TicTacToeBoard::O);
+			board.writeSquare(0, 2, TicTacToeBoard::X);
+			board.writeSquare(1, 0, TicTacToeBoard::X);
+			board.writeSquare(1, 1, TicTacToeBoard::O);
+			board.writeSquare(1, 2, TicTacToeBoard::O);
+			board.writeSquare(2, 0, TicTacToeBoard::O);
+			board.writeSquare(2, 1, TicTacToeBoard::X);
+			board.writeSquare(2, 2, TicTacToeBoard::X);
+			Assert::IsTrue(board.isDraw(), L"Expected the game to be detected as a draw");
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::X), L"Expected X to NOT be detected as winner in a draw");
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::O), L"Expected O to NOT be detected as winner in a draw");
+		}
 
 		// verify an invalid row argument to writeSquare() throws an invalid_argument exception
 		// Syntax: Assert::ExpectException<std::invalid_argument>([&] { /* code that should throw */ });
@@ -92,7 +130,10 @@ namespace TicTacToeTest
 
 
 		// verify an invalid column argument to isSquareEmpty() throws an invalid_argument exception
-
+		TEST_METHOD(VerifyIsSquareEmpty_InvalidColumnArgumentThrowsException) {
+			Assert::ExpectException<std::invalid_argument>([&] { board.isSquareEmpty(1, 5); },
+				L"Invalid column argument did not throw expected exception");
+		}
 
 
 	};
