@@ -63,6 +63,14 @@ namespace TicTacToeTest
 		}
 
 		// verify overwriting a square returns false and does not change the square contents
+
+		TEST_METHOD(VerifyOverwritingSquareReturnsFalseWithoutChangingContents) {
+			board.writeSquare(0, 0, TicTacToeBoard::X);
+			Assert::AreEqual(board.getPlayerName(),'X', L"Expected square 0,0 to contain the player's character");
+			Assert::IsFalse(board.writeSquare(0, 0, TicTacToeBoard::O),L"");
+			Assert::AreNotEqual(board.getSquareContents(0, 0),'O',L"");
+
+		}
 		/* TEST_METHOD .... */
 
 
@@ -72,28 +80,88 @@ namespace TicTacToeTest
 		//   Note: can use getPlayer() or getPlayerName() to verify the current player
 		//     (getPlayer() returns an enum, getPlayerName() returns a character)
 
-
+		
 
 		// verify a winning condition is detected for X in the first row
+		TEST_METHOD(VerifyWinningConditionIsDetectedCorrectlyInFirstRow) {
 
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::X));
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::O));
+
+			board.writeSquare(0, 0, TicTacToeBoard::X);
+			board.writeSquare(0, 1, TicTacToeBoard::X);
+			board.writeSquare(0, 2, TicTacToeBoard::X);
+
+			Assert::AreEqual(board.getSquareContents(0, 0), 'X');
+			Assert::AreEqual(board.getSquareContents(0, 1), 'X');
+			Assert::AreEqual(board.getSquareContents(0, 2), 'X');
+
+			Assert::IsTrue(board.isWinner(TicTacToeBoard::X));
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::O));
+		}
 
 		// verify a winning condition is detected for O on a diagonal
+		TEST_METHOD(VerifyWinningConditionIsDetectedForDiagonalO) {
 
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::X));
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::O));
+
+			board.writeSquare(0, 0, TicTacToeBoard::O);
+			board.writeSquare(1, 1, TicTacToeBoard::O);
+			board.writeSquare(2, 2, TicTacToeBoard::O);
+
+			Assert::AreEqual(board.getSquareContents(0, 0), 'O');
+			Assert::AreEqual(board.getSquareContents(1, 1), 'O');
+			Assert::AreEqual(board.getSquareContents(2, 2), 'O');
+
+			Assert::IsTrue(board.isWinner(TicTacToeBoard::O));
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::X));
+		}
 
 		// verify a draw condition is detected when all squares are filled and no one has won
+		TEST_METHOD(VerifyDrawDetectedWhenAllSquaresFilledWithNoWinners) {
 
+			// X 0 X
+			// 0 X 0
+			// 0 X 0
+
+			Assert::IsFalse(board.isDraw());
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::X));
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::O));
+
+			board.writeSquare(0,0,TicTacToeBoard::X);
+			board.writeSquare(1,0,TicTacToeBoard::O);
+			board.writeSquare(2,0,TicTacToeBoard::O);
+			board.writeSquare(0,1,TicTacToeBoard::O);
+			board.writeSquare(1,1,TicTacToeBoard::X);
+			board.writeSquare(2,1,TicTacToeBoard::X);
+			board.writeSquare(0,2,TicTacToeBoard::X);
+			board.writeSquare(1,2,TicTacToeBoard::O);
+			board.writeSquare(2,2,TicTacToeBoard::O);
+
+			Assert::IsTrue(board.isDraw());
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::X));
+			Assert::IsFalse(board.isWinner(TicTacToeBoard::O));
+		}
 
 		// verify an invalid row argument to writeSquare() throws an invalid_argument exception
 		// Syntax: Assert::ExpectException<std::invalid_argument>([&] { /* code that should throw */ });
-		TEST_METHOD(VerifyWriteSquare_InvalidRowArgumentThrowsException) {
+		TEST_METHOD(VerifyInvalidRowArgumentThrowsExceptionWith_writeSquare) {
 			Assert::ExpectException<std::invalid_argument>([&] { board.writeSquare(4, 2, TicTacToeBoard::X); }, 
-				L"Invalid row argument did not throw expected exception");
+				L"Invalid row argument did not throw expected exception for writeSquare");
 		}
 
 
 		// verify an invalid column argument to isSquareEmpty() throws an invalid_argument exception
+		TEST_METHOD(VerifyInvalidRowArgumentThrowsExceptionWith_isSquareEmpty) {
+			Assert::ExpectException<std::invalid_argument>([&] { board.isSquareEmpty(4, 2); },
+				L"Invalid row argument did not throw expected exception for isSquareEmpty");
+		}
 
-
+		TEST_METHOD(VerifyInvalidRowArgumentThrowsExceptionWith_getSquareContents) {
+			Assert::ExpectException<std::invalid_argument>([&] { board.getSquareContents(4, 2); },
+				L"Invalid row argument did not throw expected exception for getSquareContents");
+		}
 
 	};
 }
